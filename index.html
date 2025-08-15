@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a0a1a">
+    <title>Neon Serpent: Reborn</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background particles -->
+    <canvas id="background-canvas"></canvas>
+    
+    <!-- Main menu screen -->
+    <div id="main-menu" class="screen active">
+        <div class="logo-container">
+            <h1 class="main-title">NEON</h1>
+            <h2 class="sub-title">SERPENT</h2>
+            <div class="subtitle-glow">REBORN</div>
+        </div>
+        
+        <div class="menu-buttons">
+            <button class="menu-btn" id="play-btn">
+                <span class="btn-text">PLAY</span>
+                <div class="btn-glow"></div>
+            </button>
+            <button class="menu-btn" id="leaderboard-btn">
+                <span class="btn-text">LEADERBOARD</span>
+                <div class="btn-glow"></div>
+            </button>
+            <button class="menu-btn" id="settings-btn">
+                <span class="btn-text">SETTINGS</span>
+                <div class="btn-glow"></div>
+            </button>
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-label">HIGH SCORE</div>
+                <div class="stat-value" id="high-score">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">GAMES PLAYED</div>
+                <div class="stat-value" id="games-played">0</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game screen -->
+    <div id="game-screen" class="screen">
+        <div class="game-ui">
+            <div class="ui-left">
+                <div class="score-display">
+                    <span class="label">SCORE</span>
+                    <span class="value" id="current-score">0</span>
+                </div>
+                <div class="biome-display">
+                    <span class="label">BIOME</span>
+                    <span class="value" id="current-biome">NORMAL</span>
+                </div>
+            </div>
+            
+            <div class="ui-center">
+                <div class="level-display">
+                    <span class="label">LEVEL</span>
+                    <span class="value" id="current-level">1</span>
+                </div>
+                <div class="dash-cooldown" id="dash-cooldown">
+                    <div class="dash-icon">⚡</div>
+                    <div class="cooldown-bar">
+                        <div class="cooldown-fill" id="dash-fill"></div>
+                    </div>
+                    <span class="dash-key">SPACE</span>
+                </div>
+            </div>
+            
+            <div class="ui-right">
+                <div class="length-display">
+                    <span class="label">LENGTH</span>
+                    <span class="value" id="snake-length">1</span>
+                </div>
+                <div class="critter-display">
+                    <span class="label">CRITTERS</span>
+                    <span class="value" id="critter-count">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-container">
+            <canvas id="game-canvas" width="800" height="600"></canvas>
+            
+            <!-- Mobile Touch Controls Overlay -->
+            <div class="mobile-controls" id="mobile-controls">
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn dash-btn" id="mobile-dash-btn">
+                        <div class="btn-icon">⚡</div>
+                        <div class="btn-label">DASH</div>
+                    </button>
+                    <button class="action-btn pause-btn" id="mobile-pause-btn">
+                        <div class="btn-icon">⏸</div>
+                        <div class="btn-label">PAUSE</div>
+                    </button>
+                </div>
+                
+                <!-- Swipe Area Overlay -->
+                <div class="swipe-overlay" id="swipe-overlay"></div>
+            </div>
+        </div>
+        
+        <div class="controls-info">
+            <div class="control-hint desktop-hint">Use WASD or Arrow Keys to move • Space to dash</div>
+            <div class="control-hint mobile-hint">Swipe to move • Tap buttons for actions</div>
+        </div>
+    </div>
+    
+    <!-- Game over screen -->
+    <div id="game-over-screen" class="screen">
+        <div class="game-over-content">
+            <h1 class="game-over-title">GAME OVER</h1>
+            
+            <div class="final-stats">
+                <div class="final-stat">
+                    <span class="final-label">FINAL SCORE</span>
+                    <span class="final-value" id="final-score">0</span>
+                </div>
+                <div class="final-stat">
+                    <span class="final-label">LENGTH REACHED</span>
+                    <span class="final-value" id="final-length">0</span>
+                </div>
+                <div class="final-stat">
+                    <span class="final-label">LEVEL REACHED</span>
+                    <span class="final-value" id="final-level">0</span>
+                </div>
+            </div>
+            
+            <div class="game-over-buttons">
+                <button class="menu-btn" id="play-again-btn">
+                    <span class="btn-text">PLAY AGAIN</span>
+                    <div class="btn-glow"></div>
+                </button>
+                <button class="menu-btn secondary" id="main-menu-btn">
+                    <span class="btn-text">MAIN MENU</span>
+                    <div class="btn-glow"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Settings screen -->
+    <div id="settings-screen" class="screen">
+        <div class="settings-content">
+            <h1 class="settings-title">SETTINGS</h1>
+            
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label class="setting-label">GAME SPEED</label>
+                    <select class="setting-select" id="speed-setting">
+                        <option value="1">SLOW</option>
+                        <option value="2" selected>NORMAL</option>
+                        <option value="3">FAST</option>
+                        <option value="4">EXTREME</option>
+                    </select>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">SOUND</label>
+                    <select class="setting-select" id="sound-setting">
+                        <option value="on" selected>ON</option>
+                        <option value="off">OFF</option>
+                    </select>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">THEME</label>
+                    <select class="setting-select" id="theme-setting">
+                        <option value="neon" selected>NEON</option>
+                        <option value="classic">CLASSIC</option>
+                        <option value="dark">DARK</option>
+                    </select>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">PARTICLES</label>
+                    <select class="setting-select" id="particles-setting">
+                        <option value="high" selected>HIGH</option>
+                        <option value="medium">MEDIUM</option>
+                        <option value="low">LOW</option>
+                        <option value="off">OFF</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="menu-btn" id="back-btn">
+                <span class="btn-text">BACK</span>
+                <div class="btn-glow"></div>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Leaderboard screen -->
+    <div id="leaderboard-screen" class="screen">
+        <div class="leaderboard-content">
+            <h1 class="leaderboard-title">LEADERBOARD</h1>
+            
+            <div class="leaderboard-list" id="leaderboard-list">
+                <div class="leaderboard-item">
+                    <span class="rank">1</span>
+                    <span class="name">PLAYER</span>
+                    <span class="score">0</span>
+                </div>
+            </div>
+            
+            <button class="menu-btn" id="leaderboard-back-btn">
+                <span class="btn-text">BACK</span>
+                <div class="btn-glow"></div>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
